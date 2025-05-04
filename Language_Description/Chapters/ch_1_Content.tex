@@ -1,0 +1,301 @@
+\chapter{Introduction}
+\section{General}
+The language GLYPHIC was inspired by the natural language. Therefore, all keywords and operators are written out in English.
+
+Operations like assigning or accessing a variable or calling a function are clearly differentiated using a different operator symbol.
+
+GLYPHIC is dynamically typed, which means that the type of a variable is determined at runtime and can be changed over the course of the program's execution.
+
+The parser first builds an abstract syntax tree (AST) from the input code. Then, the AST is printed to a \enquote{.gv} file using the Graphviz library. Following this step, the AST is optimized by evaluating constant expressions and removing unreachable nodes. The AST is then printed again in this optimized form. Finally, the AST is traversed and executed by the executor function.
+
+Variables and functions are stored in their individual stores and are both accessed using an identifier. The stores are both implemented as stacks.
+
+When calling a function, the parameters are added to a separate queue before jumping to the AST node representing the start of the function body. There, the parameters are retrieved from the queue and assigned to the parameters in the given order.
+
+\pagebreak
+
+\section{Project Structure}
+\begin{Verbatim}[commandchars=none, frame=single]
+GLYPHIC/
+    |-- build/                  # Compiled intermediate files
+    |   |-- *.o
+    |   |-- *.tab.c
+    |   |-- *.tab.h
+    |   +-- *.yy.c
+    |-- graphs/                 # AST graphs in .gv and .png format
+    |   |-- *.gv
+    |   +-- *.png
+    |-- include/                # Include directory
+    |   |-- ast.c
+    |   |-- ast.h
+    |   |-- function_params.c
+    |   |-- function_params.h
+    |   |-- function_storage.c
+    |   |-- function_storage.h
+    |   |-- variable_storage.c
+    |   +-- variable_storage.h
+    |-- programs/               # Programs
+    |   |-- frame.glyph
+    |   |-- rpsls.glyph
+    |   |-- towersOfHanoi.glyph
+    |   +-- languageDemo.glyph
+    |-- executor.sh             # Shell script for shorter cmd inputs
+    |-- GLYPHIC                 # Executable
+    |-- GLYPHIC.l               # lex lexer file
+    |-- GLYPHIC.y               # GNU Bison file
+    |-- makefile                # Makefile
+    +-- testfile.glyph          # Test program
+\end{Verbatim}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{Language Specification}
+
+\section{Comments}
+Line comments are specified by \greybox{\textasciitilde|} and block comments by \greybox{\textasciitilde\{} and \greybox{\}\textasciitilde}.
+
+\greybox{\textasciitilde| This is a line comment.}
+
+\greybox{\textasciitilde\{ This is a block comment. \}\textasciitilde}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Basic Data Types}
+\subsection{Numbers}
+Numbers are always stored using the C data type double. If a number without decimals is printed, the \enquote{\%g} formatting option is used.
+
+\subsection{Regular Notation}
+The number is equal to it's face value.
+
+\greybox{12345} \greybox{12.345} \greybox{-123.45}
+
+\subsection{Value-Base Notation}
+The base for the number is determined by the decimal number following the \greybox{r}.
+
+\greybox{1C7r16} = 455 (base 16)
+
+\greybox{541r11} = 650 (base 11)
+
+\subsection{Symbol Notation}
+The number is equal to the number of \greybox{\#} following the \greybox{u}.
+
+\greybox{u\#\#\#} = 3
+
+\greybox{u\#\#\#\#\#\#\#\#\#\#} = 10
+
+\subsection{Strings}
+Strings are stored using the C data type char*. They are always enclosed in \greybox{<<} and \greybox{>>}.
+
+\greybox{<<Hello, World!>>} \greybox{<<This is a string.>>}
+
+Control sequences are defined by \greybox{\textasciitilde}.
+
+\greybox{<<\textasciitilde n>>} = a newline
+
+\greybox{<<\textasciitilde t>>} = a tab
+
+\greybox{<<\textasciitilde < >>} and \greybox{<<\textasciitilde > >>} for literal < and >
+
+ASCII characters are defined by \greybox{\textasciitilde x} followed by the ASCII code.
+
+\greybox{<<\textasciitilde x41>>} = 'A'
+
+\subsection{Boolean}
+Boolean values are stored using the C data type char*. They are equal to their written value
+\greybox{true} or \greybox{false}
+
+\subsection{Arrays}
+Arrays are identified by the \greybox{\{} and \greybox{\}} delimiter characters. They are available for the data types number, string, and boolean. Internally, they are stored as a struct containing a  list of pointers to the respective data type (double* or char**) and an integer with the length of the array.
+
+\greybox{\{1 2 3 4 5\}} \greybox{\{<<Hello>> <<World>> <<!>>\}} \greybox{\{true false true\}}
+
+The length of an array is final once declared and cannot be changed.
+
+The value of a field can be changed like a regular assignment:
+
+\greybox{[myArray](2) equals 10}
+
+If the requested index is out of bounds, the program will automatically print an error message.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Identifiers and Value Access}
+Valid identifiers have to be enclosed in \greybox{\lbrack} and \greybox{\rbrack}.
+
+\greybox{$[myVariable]$} \greybox{$[x]$} \greybox{$[myArray]$}
+
+To access the value of an identifier, the \greybox{\textasciitilde} operator is used.
+
+\greybox{\textasciitilde$[myVariable]$} \greybox{\textasciitilde$[x]$} \greybox{\textasciitilde$[myArray]$}
+
+To access the value of an array, the index is enclosed in \greybox{(} and \greybox{)} and placed after the identifier access. If the requested index is out of bounds, the program will automatically print an error message.
+
+\greybox{\textasciitilde$[myArray](2)$} \greybox{\textasciitilde$[myArray]($\textasciitilde$[index])$}
+
+Inside the index brackets, no further calculations can be performed. The following is therefore invalid:
+
+\greybox{\textasciitilde$[myArray](2 plus 1)$}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Operators}
+Operators are defined by their literal string value.
+    \\\greybox{plus}: +
+    \\\greybox{minus}: -
+    \\\greybox{times}: *
+    \\\greybox{divby}: /
+    \\\greybox{and}: \&\& (logical and)
+    \\\greybox{or}: || (logical or)
+    \\\greybox{equals}: Equality or Assignment operator
+    \\\greybox{isnt}: Inequality
+    \\\greybox{smaller}: <
+    \\\greybox{bigger}: >
+    \\\greybox{modulo}: \%
+
+Operations can be performed on the following data pairs:
+    
+number and number (all operators)
+    
+boolean and boolean (all operators, for mathematical operations: true = 1, false = 0)
+    
+number and boolean (boolean is converted to number: true = 1, false = 0)
+    
+string and string (plus for concatenation, equals and isnt for Equality, smaller and bigger for length comparison, modulo for substring check)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Keywords}
+The following keywords are available in GLYPHIC:
+    \\\greybox{if}
+    \\\greybox{do}
+    \\\greybox{otherwise}
+    \\\greybox{end}
+    \\\greybox{repeat}
+    \\\greybox{give}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Control Structures}
+
+\subsection{Functions}
+This is an example of a function declaration for the function \greybox{add} that adds two numbers in GLYPHIC:
+
+\begin{Verbatim}[commandchars=none, frame=single]
+->[add]: ([x] [y]) =>
+    [result] equals ~[x] plus ~[y]
+    give ~[result]
+end
+\end{Verbatim}
+
+The \greybox{->} operator is used to declare a function. The function name is written as a regular identifier using \greybox{[} and \greybox{]}.
+
+The parameter list is enclosed in \greybox{(} and \greybox{)}. The function body is enclosed in \greybox{=>} and \greybox{end}.
+
+Functions always need a \greybox{give} statement to return a value, even if it is 0 and unused.
+
+A function is called by using the \greybox{\&} operator followed by the identifier and passing the parameters in \greybox{(} and \greybox{)}.
+
+\begin{Verbatim}[commandchars=none, frame=single]
+    [result] equals &[add](10 20)
+\end{Verbatim}
+
+Inside the parameter list, no further calculations can be performed. The following is therefore invalid:
+
+\begin{Verbatim}[commandchars=none, frame=single]
+    [result] equals &[add](10 plus 1 20)
+\end{Verbatim}
+
+\subsection{Loop}
+This is an example of a loop:
+
+\begin{Verbatim}[commandchars=none, frame=single]
+    [counter] equals 0
+    repeat: <~[counter] smaller 10> do
+        [counter] plus 1
+    end
+\end{Verbatim}
+
+The \greybox{repeat} keyword is used to start a loop. The loop condition being evaluated to true / false is enclosed in \greybox{<} and \greybox{>} and is followed by the \greybox{do} keyword.
+
+If the condition contains only a single number, the condition is true if the number is not 0.
+
+The condition can consist of multiple statements chained together with \greybox{and} or \greybox{or}. As brackets are not allowed, the order of operations is from left to right.
+
+\begin{Verbatim}[commandchars=none, frame=single]
+    [counter] equals 0
+    repeat: <~[counter] smaller 10 and ~[counter] bigger 0> do
+        [counter] plus 1
+    end
+\end{Verbatim}
+
+Each statement can consist of multiple calculations chained together. 
+
+\begin{Verbatim}[commandchars=none, frame=single]
+    [counter] equals 0
+    repeat: <~[counter] plus 1 smaller 10> do
+        [counter] plus 1
+    end
+\end{Verbatim}
+
+These two points also apply to the conditions of the condition and check structures detailed below. 
+
+\subsection{Condition}
+This is an example of a condition:
+
+\begin{Verbatim}[commandchars=none, frame=single]
+    if: <~[x] equals 10>
+        &[print] (<<Value of x is 10>>)
+    otherwise:
+        &[print] (<<x is not 10>>)
+    end
+\end{Verbatim}
+
+Similar to the loop, the condition is enclosed in \greybox{<} and \greybox{>}.
+
+\subsection{Check}
+This is an example of a check:
+
+\begin{Verbatim}[commandchars=none, frame=single]
+    if: <~[x] equals 10>
+        &[print] (<<Value of x is 10>>)
+    end
+\end{Verbatim}
+
+It is a special version of a condition that does not have an \greybox{otherwise} branch.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Library Functions}
+The following functions are available in the GLYPHIC standard library and do not need to be declared by the user:
+
+\greybox{\&[print]()} prints any number of any parameter passed to it to stdout (string, number, boolean, variables, function returns)
+
+\greybox{\&[readnum]()} returns the next number read from stdin
+
+\greybox{\&[readstr]()} returns the next string read from stdin
+
+\greybox{\&[random](double double)} returns a random int (inclusive with the bounds)
+
+\greybox{\&[strsplit](string)} returns a list containing the parts of the string that were separated by whitespaces
+
+\greybox{\&[strlen](string)} returns the length of the given string (does not count the null terminator)
+
+\greybox{\&[arrlen](array)} returns the number of objects in the given array. The value is simply retrieved from the field of the corresponding struct.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Language \enquote{Quirks}}
+\subsection{Shorter Assignment}
+Like assigning values to variables using \greybox{[number] equals 10} operations like \greybox{[number] plus 10} are also possible.
+
+The previous statement is therefore equal to\greybox{[number] equals \textasciitilde[number] plus 10}.
+
+\subsection{Dynamic Typing}
+GLYPHIC is dynamically typed. This means that the following is possible:
+
+\begin{Verbatim}[commandchars=none, frame=single]
+    [counter] equals 0
+    &[print](~[counter] <<~n>>) ~| prints 0
+
+    [counter] equals false
+    &[print](~[counter] <<~n>>) ~| prints false
+\end{Verbatim}

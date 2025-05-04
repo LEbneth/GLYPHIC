@@ -1,0 +1,13 @@
+{
+    "makefile.configureOnOpen": false,
+    "files.associations": {
+        "compare": "cpp",
+        "concepts": "cpp",
+        "type_traits": "cpp",
+        "cmath": "cpp",
+        "limits": "cpp",
+        "new": "cpp",
+        "ast.h": "c",
+        "variable_storage.h": "c"
+    }
+}

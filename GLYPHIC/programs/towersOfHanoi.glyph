@@ -1,0 +1,25 @@
+~{ Function declarations }~
+
+->[towersOfHanoi]: ([disk] [fromRod] [toRod] [auxRod]) =>
+    if:<~[disk] equals 1>
+        &[print] (<<~nMove disk 1 from rod >> ~[fromRod] << to rod >> ~[toRod])
+    otherwise: 
+        [diskTemp] equals ~[disk] minus 1
+
+        &[towersOfHanoi](~[diskTemp] ~[fromRod] ~[auxRod] ~[toRod])
+        &[print] (<<~nMove disk >> ~[disk] << from rod >> ~[fromRod] << to rod >> ~[toRod])
+        &[towersOfHanoi](~[diskTemp] ~[auxRod] ~[toRod] ~[fromRod])
+    end
+
+    give 0
+end
+
+~{ Towers of Hanoi }~
+~{ Start of program }~
+
+&[print](<<Enter number of disks:~n>>)
+[diskCount] equals &[readnum]()
+
+&[towersOfHanoi](~[diskCount] <<A>> <<C>> <<B>>)
+
+~{ End of program }~

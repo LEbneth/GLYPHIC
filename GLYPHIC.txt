@@ -1,0 +1,89 @@
+// GLYPHIC //
+
+Numbers:
+    regular double: 12345, 12.5, -11.96
+    radix stacked: number 'r' base 1C7r16 = 455
+    reversed unary: u#### = 4 (number = count of '#'')
+
+Strings:
+    String literals: <<this is a string>>
+    Control Sequences: defined using: ~ (~n newline, ~< and ~> for literals)
+    ASCII characters: ~x (~x41 = A)
+
+Boolean:
+    true 
+    false
+
+Arrays:
+    {1.4 2.9 3.3}
+    {<<Hello>> <<World>> <<!>>}
+
+Valid identifiers: 
+    encased in square brackets [my_variable] [my_function]
+    access using ~[my_variable]
+    calling functions: &[function_name] (paramater1 parameter2 ...)
+
+Comments:
+    Block comments: ~{ block comment }~
+    Line comments: ~| line comment
+
+Operators:
+    Addition: plus
+    Subtraction: minus
+    Multiplication: times
+    Division: divby
+    Logical AND: and
+    Logical OR: or
+    Equality / Assignments: equals
+    Inequality: isnt
+    less than <: smaller
+    more than >: bigger
+
+Keywords:
+    if
+    do
+    otherwise
+    end
+    repeat
+    give
+
+"Library" functions:
+    &[print]() prints any parameters to stdout (string, number, boolean, variables, function return)
+    &[readnum]() reads a number from stdin
+    &[readstr]() reads a string from stdin
+    &[random](double double) returns a random int (inclusive with the bounds)
+    &[strsplit](string) returns a list of the string split into individual words 
+    &[strlen](string) returns the length of the string
+    &[arrlen](array) returns the number of objects in the array
+
+Control Structures:
+Function: 
+    declared using -> [name]: (paramaters) => ... end
+    ->[add]: ([x] [y]) => 
+        [result] equals ~[x] plus ~[y]
+        give ~[result]
+    end
+
+Loop:
+    [counter] equals 0
+    repeat: <~[counter] smaller 10> do
+        [counter] plus 1
+    end
+
+Condition:
+    if: <~[x] equals 10>
+        &[print] (<<Value of x: >> ~[x])
+    otherwise:
+        &[print] (<<x is too small>>)
+    end
+
+Check:
+    if: <~[x] equals 10>
+        &[print] (<<Value of x: >> ~[x])
+    end
+
+Quirks:
+    like assigning with:    [number] equals 1
+    operations like:    [number] plus 10 (=11)
+    or:     [number] plus 5 times 10 (= plus 60 = 61)
+    are also possible. The access operator is hereby omitted.

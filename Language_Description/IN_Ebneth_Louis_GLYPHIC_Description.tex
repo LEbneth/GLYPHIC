@@ -1,0 +1,184 @@
+% arara: pdflatex: { shell: yes } until !found('log', '\\(?(R|r)e\\)?run (to get|LaTeX)')
+\documentclass[fontsize=12pt,oneside]{report}
+\usepackage[T1]{fontenc}		% Einstellungen fuer Umlaute usw.
+\usepackage[utf8]{inputenc}
+%\usepackage[english,german]{babel}
+\usepackage[english]{babel}
+
+\usepackage[onehalfspacing]{setspace}
+
+\usepackage{parskip}			% Einstellungen fuer Absaetze: Abstand statt Einrueckung
+
+\usepackage[a4paper,	% Papierformat A4
+left=3.5cm,				% linker Rand
+right=2.5cm,			% rechter Rand
+top=2.5cm,				% oberer Rand
+bottom=2.0cm,			% unter Rand
+marginparsep=5mm,		% Abstand der Randnotizen
+marginparwidth=10mm, 	% Breite der Randnotizen
+headheight=12pt,		% Hoehe der Kopfzeile
+headsep=0.5cm,			% Abstand der Kopfzeile
+footskip=1.5cm,			% Abstand der Fusszeile
+includeheadfoot]{geometry}
+
+\usepackage{amsmath}				% Pakete fuer den Mathematikmodus
+\usepackage{amssymb}
+\usepackage[intlimits]{empheq}
+%\usepackage{dsfont}
+\usepackage{courier}
+\usepackage{graphicx}
+\usepackage[sc]{mathpazo}		% Schriftart Palatino fuer Haupttext und Mathematikmodus
+\usepackage{pifont}				% zusaetzliche Symbole
+
+\usepackage[format=hang,			% Einstellung fuer Bildunterschriften
+font={footnotesize},
+labelfont={bf},
+margin=1.5cm,
+aboveskip=5pt,
+position=bottom]{caption}
+
+\usepackage{graphicx}							% Einbinden von Graphiken
+\usepackage[svgnames,table]{xcolor} 		% Verwendung von Farben
+\usepackage{tikz}								% Erstellen von Grafiken
+\usetikzlibrary{positioning,arrows,plotmarks} 	% TikZ-Bibliotheken
+
+\usepackage[bookmarks, raiselinks, pageanchor, 	% PDF-Einstellungen für Links
+            hyperindex, colorlinks,
+            citecolor=black, linkcolor=black,
+            urlcolor=black, filecolor=black,
+            menucolor=black, hidelinks]{hyperref}
+
+\usepackage[autostyle=true,german=quotes]{csquotes}	% Zur Nutzung von deutschen Anführungszeichen, innerhalb des Textes mit dem Befehl \enquote vorgehen
+\usepackage[bottom]{footmisc}
+\usepackage[gen]{eurosym}				% Eurozeichen einfügen
+\usepackage{chngpage}					
+\usepackage{lscape}						% Nützlich, falls querformatierte 	Seiten gewünscht sind
+\usepackage{pdflscape}					% Zum exportieren der Landscapes in PDF-Dateien
+\usepackage{lipsum}						% Dummy-Text generieren
+
+\usepackage{fancyhdr}					% Konfiguration von Kopf- und Fusszeilen
+\pagestyle{fancy}						% Seitenstil 'fancy'
+\fancyhf{}								% vorhandene Einstellungen loeschen
+\setlength{\headwidth}{\textwidth}		% Kopf- und Fusszeile so breit wie der Haupttext
+\fancyfoot[C]{\thepage} 					% Festlegung des Seitenstils: Seitenzahlen in der Fusszeile rechts
+\fancyhead[R]{\leftmark}					% Kapitelnr. und -Bezeichnung in der Fusszeile links
+\renewcommand{\chaptermark}[1]{			% Definition der Ausgabe des Kapitels
+  \markboth{\thechapter. #1}{}}
+\renewcommand{\headrulewidth}{0.5pt}		% Trennlinie zwischen Kopfzeile und Haupttext
+%\renewcommand{\footrulewidth}{0.5pt}	% Trennlinie zwischen Haupttext und Fusszeile
+\fancypagestyle{plain}{					% Anpassung des Seitenstils 'plain' bei Beginn neuer Kapitel
+  \fancyhf{}								% Vorbelegung loeschen
+  \fancyfoot[C]{\thepage}				% Seitenzeilen in der Fusszeile mittig
+  \fancyhead[R]{\leftmark}				% Kapitelnr. und -Bezeichnung in der Fusszeile links
+}
+
+\usepackage{verbatim}
+\usepackage{fancyvrb}
+\usepackage{mdframed}
+
+
+\usepackage{color}
+\definecolor{lightgray}{gray}{0.8}
+
+\newcommand\greybox[1]{
+  \colorbox{lightgray}{#1}
+}
+
+% 
+% Persoenliche Angaben, diese bitte vollständig ausfüllen.
+% 
+\newcommand*{\IhrVorname}{Louis}
+\newcommand*{\IhrNachname}{Ebneth}
+\newcommand*{\IhrStudiengang}{Allgemeine Informatik}
+\newcommand*{\IhreMatrikelnummer}{3345711}
+\newcommand*{\IhreFakultaet}{Informatik und Mathematik}
+\newcommand*{\IhreArbeit}{GLYPHIC Language Description}	% alles in Großbuchstaben
+\newcommand*{\IhrTitelEN}{GLYPHIC Language Description}
+
+\newcommand*{\IhreSchluesselwoerter}{DCMC}
+
+% Hiermit trägt pdflatex die PDF-Metadaten des erzeugten Dokuments ein:
+\hypersetup{pdftitle={\IhrTitelEN},%
+	pdfauthor={\IhrVorname\ \IhrNachname},%
+	pdfsubject={\IhrTitelEN},%
+	pdfkeywords={\IhreSchluesselwoerter}
+}
+
+\begin{document}
+	\pagenumbering{roman}
+	\begin{titlepage}					% Titelseite
+		\thispagestyle{empty}
+		% Zum Einfügen eines OTH-Logos und eines Firmenlogos, den folgenden Abschnitt einkommentieren und die Bilder als PNG/JPG Dateien im gleichen Verzeichnis wie dieses Dokument - oder einem Unterverzeichnis - ablegen.
+		\begin{figure}
+   			\begin{minipage}[t]{0.48\linewidth}
+        		\centering
+        		%\includegraphics[width=\linewidth]{Chapters/img_OTH_Logo.png}
+   			\end{minipage}
+   		\hfill
+    		\begin{minipage}[t]{0.48\linewidth}
+        		\centering
+       			%\includegraphics[width=\linewidth]{Chapters/img_Vector_Logo.png}
+   			\end{minipage}
+		\end{figure}
+		\vspace*{2cm}
+	    	\Huge
+		\begin{flushleft}
+		\textbf{\IhreArbeit} \\
+		\large
+		\IhrVorname \ \IhrNachname \\
+		\vspace*{1.5cm}
+		\Large
+		\textbf{\IhrTitelEN} \\
+		\vspace*{\fill}
+	
+		\normalsize
+		\begin{tabular}{ll}
+			Faculty: & \IhreFakultaet \\
+  			Course of study: & \IhrStudiengang \\
+            Student: & \IhrVorname \ \IhrNachname\\
+  		    Matriculation number: & \IhreMatrikelnummer \\
+  		\end{tabular}
+		\end{flushleft}				
+	\end{titlepage}
+	\normalsize
+	
+	\newpage
+	{
+		\hypersetup{linkcolor=black}	% Färbung von Links innerhalb des Inhaltsverzeichnisses auf schwarz setzen
+		\tableofcontents
+	}
+	
+	\newpage
+		
+	\pagenumbering{arabic}
+		
+	%\include{Kapitel1}	% Die Kapitel als seperate .tex Datei im Ordner abspeichern. Dort dann Befehle wie \chapter{} und \section{} sowie \subsection{} verwenden (Keine neue "documentclass!")
+	%\include{Kapitel2}
+
+    \include{Chapters/ch_1_Content}
+
+	% Literaturverzeichnis in das Inhaltsverzeichnis einfügen
+	%\addcontentsline{toc}{chapter}{Bibliography}
+	
+	% Style für die Bibliothek festlegen
+  	%\bibliographystyle{alpha}
+	% plain
+	% apalike
+
+  	% Einfügen des Literaturverzeichnisses in das Dokument
+	%\bibliography{Chapters/ch_8_Bibliography.bib}
+	
+	% Anhang
+	%\addcontentsline{toc}{chapter}{Abbildungsverzeichnis}
+	%\listoffigures
+	
+	%\addcontentsline{toc}{chapter}{Tabellenverzeichnis}
+	%\listoftables
+	
+	%\addcontentsline{toc}{chapter}{Listingsverzeichnis} % für Quellcode
+	%\lstlistoflistings 
+	
+	%\addcontentsline{toc}{chapter}{Digitaler Anhang}	% für digitalen Anhang, falls nötig
+	%\include{anhang}
+	
+\end{document}

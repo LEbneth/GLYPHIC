@@ -1,0 +1,105 @@
+~{ STATEMENT }~
+~{ passed }~
+[var] equals 1
+[var] equals ~[var2]
+[var] equals &[func] (1)
+[var] equals &[func] (1 2)
+[var] equals ~[x] plus ~[y]
+
+
+~{ CALCULATION }~
+~{ passed }~
+[test] equals 1 plus 1
+&[print] (<<~nPlus: >> ~[test])
+
+[test] equals 1 minus 1
+&[print] (<<~nMinus: >> ~[test])
+
+[test] equals 1 times 5
+&[print] (<<~nTimes: >> ~[test])
+
+[test] equals 10 divby 5
+&[print] (<<~nDivby: >> ~[test])
+
+[test] equals 1 and 1
+&[print] (<<~nAnd true: >> ~[test])
+[test] equals 1 and 0
+&[print] (<<~nAnd false: >> ~[test])
+
+[test] equals 1 or 0
+&[print] (<<~nOr true: >> ~[test])
+[test] equals 0 or 0
+&[print] (<<~nOr false: >> ~[test])
+
+[test] equals 1 equals 1
+&[print] (<<~nEquals true: >> ~[test])
+[test] equals 1 equals 0
+&[print] (<<~nEquals false: >> ~[test])
+
+[test] equals 5 bigger 1
+&[print] (<<~nbigger true: >> ~[test])
+[test] equals 5 bigger 10
+&[print] (<<~nbigger false: >> ~[test])
+
+[test] equals 5 smaller 10
+&[print] (<<~nSmaller true: >> ~[test])
+[test] equals 5 smaller 1
+&[print] (<<~nSmaller false: >> ~[test])
+
+
+~{ FUNCTION }~
+~{ passed }~
+~| declare function add_numbers:
+->[add_numbers]: ([x] [y]) => 
+    [result] equals ~[x] plus ~[y]
+    [result] equals ~[result] plus 0
+    give ~[result]    
+end
+
+
+~{ CALL }~
+~{ passed }~
+&[add_numbers] (1 5)
+
+
+~{ STRUCTURE LOOP }~
+~{ passed }~
+[start] equals 0
+repeat: <[start] smaller 5> do
+    [start] equals &[add_numbers] (~[start] 1)
+    ~| Show current value
+    &[print] (<<~nCurrent value: >> ~[start])
+end
+
+
+~{ STRUCTURE CONDITION }~
+~{ passed }~
+if: <[start] equals 5>
+    &[print] (<<~nValue of x: >> ~[x])
+otherwise:
+    &[print] (<<~nError: start should be 5!>>)
+end
+
+
+~{ String notations }~
+~{ passed }~
+&[print] (<<~nThis string has an ascii character in a new line here:~n~x41>>)
+
+
+~{ Number notations }~
+~{ passed }~
+~{ This is a number in decimal notation}~
+[decimal] equals 12345
+~{ This is a number in radix-stacked notation (number 'r' base)}~
+[radix] equals 1C7r16
+~{ This is a number in reverse unary notation (number = amount of '#')}~
+[unary] equals u####
+
+
+~{ Library functions }~
+~{ passed }~
+[str] equals &[readstr]()
+&[print] (<<~nUser Input string is: >> ~[str])
+
+[num] equals &[readnum]()
+&[print] (<<~nUser Input number is: >> ~[num])

@@ -1,0 +1,18 @@
+GLYPHIC/GLYPHIC
+**.tab.*
+**.yy.*
+**.png
+**.gv
+**.DS_Store
+**/build
+**/graphs
+**.DS_Store
+*.toc
+*.gz
+*.out
+*.log
+*.fls
+*.fdb_latexmk
+*.aux
+*.synctex(busy)
+DCMC - Study Project.pdf

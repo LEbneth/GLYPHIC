@@ -1,0 +1,110 @@
+~{ Global Variables }~
+
+[values] equals {<<Rock>> <<Paper>> <<Scissors>> <<Lizard>> <<Spock>>}
+
+[winsAi] equals 0
+[winsPlayer] equals 0
+
+~{ Function declarations }~
+
+->[evaluateRound]: ([playerInput] [aiInput]) =>
+    [winsPlayerTmp] equals ~[winsPlayer]
+
+    if: <~[playerInput] isnt ~[aiInput]>
+        if: <~[playerInput] equals 0> ~| Rock
+            if: <~[aiInput] equals 2 or ~[aiInput] equals 3> ~| Scissors / Lizard
+                [winsPlayer] plus 1
+            end
+        end
+        if: <~[playerInput] equals 1> ~| Paper
+            if: <~[aiInput] equals 0 or ~[aiInput] equals 4> ~| Rock / Spock
+                [winsPlayer] plus 1
+            end
+        end
+        if: <~[playerInput] equals 2> ~| Scissors
+            if: <~[aiInput] equals 1 or ~[aiInput] equals 3> ~| Paper / Lizard
+                [winsPlayer] plus 1
+            end
+        end
+        if: <~[playerInput] equals 3> ~| Lizard
+            if: <~[aiInput] equals 1 or ~[aiInput] equals 4> ~| Paper / Spock
+                [winsPlayer] plus 1
+            end
+        end
+        if: <~[playerInput] equals 4> ~| Spock
+            if: <~[aiInput] equals 0 or ~[aiInput] equals 2> ~| Rock / Scissors
+                [winsPlayer] plus 1
+            end
+        end
+
+        if: <~[winsPlayerTmp] isnt ~[winsPlayer]>
+            &[print](~[values](~[playerInput]) << beats >> ~[values](~[aiInput]) <<!~n>>)
+        otherwise:
+            &[print](~[values](~[playerInput]) << loses against >> ~[values](~[aiInput]) <<!~n>>)
+            [winsAi] plus 1
+        end
+        &[print](<<Player: >> ~[winsPlayer] << AI: >> ~[winsAi] <<~n~n>>)
+    otherwise:
+        &[print](<<You picked the same! This round is a tie~n~n>>)
+    end
+
+    give 0
+end
+
+->[playFairRound]: () =>
+    &[print](<<Input your choice:~n>>)
+    [playerInput] equals &[readnum]()
+
+    [aiInput] equals &[random](0 4)
+
+    &[evaluateRound](~[playerInput] ~[aiInput])
+
+    give 0
+end
+
+->[playUnfairRound]: () =>
+    &[print](<<Input your choice:~n>>)
+    [playerInput] equals &[readnum]()
+    [aiInput] equals 0
+
+    if: <~[playerInput] equals 0>
+        [aiInput] equals 4
+    end
+    if: <~[playerInput] equals 1>
+        [aiInput] equals 3
+    end
+    if: <~[playerInput] equals 2>
+        [aiInput] equals 0
+    end
+    if: <~[playerInput] equals 3>
+        [aiInput] equals 2
+    end
+    if: <~[playerInput] equals 4>
+        [aiInput] equals 1
+    end
+
+    &[evaluateRound](~[playerInput] ~[aiInput])
+
+    give 0
+end
+
+~{ Rock Paper Scissors Lizard Spock }~
+~{ Start of program }~
+
+&[print](<<0 = Rock~n1 = Paper~n2 = Scissors~n3 = Lizard~n4 = Spock~n>>)
+
+[round] equals 0
+repeat: <~[winsAi] isnt 3> do
+    [round] plus 1
+    &[print](<<Playing Round: >> ~[round] <<~n>>)
+
+    if: <~[winsPlayer] isnt 2>
+        &[playFairRound]()
+    otherwise:
+        &[playUnfairRound]()
+    end
+end
+
+&[print](<<~nThe game is over!~nPoints player: >> ~[winsPlayer] <<~nPoints AI: >> ~[winsAi])
+
+~{ End of program }~

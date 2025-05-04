@@ -1,0 +1,148 @@
+~{ Function declarations }~
+
+->[printMaze]: ([maze]) =>
+    [tmp] equals 0
+    repeat: <~[tmp] isnt ~[rows] times 2 plus 1> do
+        &[print](<<->>)
+        [tmp] plus 1
+    end
+    &[print](<<~n>>)
+
+    [r] equals 0
+    repeat: <~[r] isnt ~[rows]> do
+        &[print](<<|>>)
+        [c] equals 0
+        repeat: <~[c] isnt ~[columns]> do
+            [index] equals ~[columns] times ~[r] plus ~[c]
+            &[print](~[maze](~[index]))
+            [c] plus 1
+            if: <~[c] isnt ~[columns]>
+                &[print](<< >>)
+            end
+        end
+        &[print](<<|~n>>)
+        [r] plus 1
+    end
+
+    [tmp] equals 0
+    repeat: <~[tmp] isnt ~[rows] times 2 plus 1> do
+        &[print](<<->>)
+        [tmp] plus 1
+    end
+    &[print](<<~n>>)
+
+    give 0
+end
+
+->[isValidField]: ([x] [y]) =>
+    [return] equals false
+
+    if:<~[x] bigger -1 and ~[x] smaller ~[columns] and ~[y] bigger -1 and ~[y] smaller ~[rows]>
+        [tmp] equals ~[columns] times ~[y] plus ~[x]
+        ~{ &[print](<<isValid for: >> ~[x] <</>> ~[y] <<: >> ~[maze](~[tmp]) <<~n>>) }~
+        if:<~[maze](~[tmp]) equals 1>
+            [return] equals true
+        end
+    end
+
+    give ~[return]
+end
+
+->[solve]: ([x] [y]) =>
+    ~{ &[print](<<Solving for: >> ~[x] <</>> ~[y] <<~n>>) }~
+    [return] equals false
+    
+    if:<~[x] equals ~[end](0) and ~[y] equals ~[end](1)>
+        [return] equals true
+    end
+
+    if:<~[return] isnt true and &[isValidField](~[x] ~[y])>
+        [tmp] equals ~[columns] times ~[y] plus ~[x]
+        [path](~[tmp]) equals 1
+        [maze](~[tmp]) equals 0
+
+        [xt] equals ~[x] plus 1
+        if:<&[solve](~[xt] ~[y])>
+            [return] equals true
+        end
+
+        [xt] equals ~[x] minus 1
+        if:<~[return] isnt true and &[solve](~[xt] ~[y])>
+            [return] equals true
+        end
+
+        [yt] equals ~[y] plus 1
+        if:<~[return] isnt true and &[solve](~[x] ~[yt])>
+            [return] equals true
+        end
+
+        [yt] equals ~[y] minus 1
+        if:<~[return] isnt true and &[solve](~[x] ~[yt])>
+            [return] equals true
+        end
+        
+        if:<~[return] isnt true>
+            [tmp] equals ~[columns] times ~[y] plus ~[x]
+            [path](~[tmp]) equals 0
+            [maze](~[tmp]) equals 1
+        end
+    end
+
+    if:<~[x] equals ~[end](0) and ~[y] equals ~[end](1)>
+        [tmp] equals ~[columns] times ~[y] plus ~[x]
+        [path](~[tmp]) equals 1
+        [maze](~[tmp]) equals 0
+    end
+
+    give ~[return]
+end
+
+~{ Maze Solver }~
+~{ Global Variables }~
+
+[rows] equals 10
+[columns] equals 10
+
+[maze] equals {
+    1 1 0 1 1 0 1 1 1 1
+    0 1 0 0 1 1 1 0 0 0
+    1 1 1 1 1 0 1 1 1 1
+    1 0 1 0 0 0 1 0 0 1
+    1 1 1 0 0 1 1 1 0 1
+    0 0 1 1 0 1 0 1 0 1
+    1 1 1 0 0 1 0 1 0 0
+    1 0 1 1 1 1 0 1 1 1
+    1 0 1 0 0 1 0 0 0 1
+    1 0 1 1 0 1 1 1 0 1
+}
+[start] equals { 0 0 }
+[end] equals { 9 9 }
+
+[path] equals { 
+    0 0 0 0 0 0 0 0 0 0
+    0 0 0 0 0 0 0 0 0 0
+    0 0 0 0 0 0 0 0 0 0
+    0 0 0 0 0 0 0 0 0 0
+    0 0 0 0 0 0 0 0 0 0
+    0 0 0 0 0 0 0 0 0 0
+    0 0 0 0 0 0 0 0 0 0
+    0 0 0 0 0 0 0 0 0 0
+    0 0 0 0 0 0 0 0 0 0
+    0 0 0 0 0 0 0 0 0 0
+}
+
+~{ Start of program }~
+
+&[print](<<The maze is:~n>>)
+&[printMaze](~[maze])
+
+[solvable] equals &[solve](~[start](0) ~[start](1))
+
+if:<~[solvable]>
+    &[print](<<A correct path is:~n>>)
+    &[printMaze](~[path])
+otherwise:
+    &[print](<<The given maze is not solvable!~n>>)   
+end
+
+~{ End of program }~

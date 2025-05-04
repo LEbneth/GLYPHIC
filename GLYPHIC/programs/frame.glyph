@@ -1,0 +1,58 @@
+~{ Function declarations }~
+
+->[printStarLine]:([maxLen]) =>
+    [maxLen] plus 4
+    [counter] equals 0
+    repeat: <~[counter] smaller ~[maxLen]> do
+        &[print](<<*>>)
+        [counter] plus 1
+    end
+
+    give 0
+end
+
+~{ Start of program }~
+
+&[print](<<Please enter a sentence:~n>>)
+[sentence] equals &[readstr]()
+
+[words] equals &[strsplit](~[sentence])
+
+[maxLen] equals 0
+[counter] equals 0
+repeat: <~[counter] smaller &[arrlen](~[words])> do
+    if: <&[strlen](~[words](~[counter])) bigger ~[maxLen]>
+        [maxLen] equals &[strlen](~[words](~[counter]))
+    end
+
+    [counter] plus 1
+end
+
+~{ top stars }~
+&[printStarLine](~[maxLen])
+
+&[print](<<~n>>)
+
+~{ framed words }~
+[maxLen] minus 4
+[counter] equals 0
+repeat: <~[counter] smaller &[arrlen](~[words])> do
+    &[print](<<* >>)
+    &[print](~[words](~[counter]))
+    
+    [whitespace] equals ~[maxLen] minus &[strlen](~[words](~[counter]))
+
+    [counter2] equals 0
+    repeat: <~[counter2] isnt ~[whitespace]> do
+        &[print](<< >>)
+        [counter2] plus 1
+    end
+
+    &[print](<< *~n>>)
+    [counter] plus 1
+end
+
+~{ bottom stars }~
+&[printStarLine](~[maxLen])
+
+~{ End of program }~
